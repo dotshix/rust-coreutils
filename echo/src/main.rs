@@ -10,9 +10,6 @@ struct CLI {
     /// Omits newline
     n: bool,
 
-    #[arg(short)]
-    bob: Option<String>,
-
     #[arg(required = true)]
     /// Input text
     text: Vec<String>,
