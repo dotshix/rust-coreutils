@@ -35,12 +35,31 @@ pub fn get_args() -> MyResult<Config> {
     Ok(args)
 }
 
+pub fn read_lines(file: Box<dyn BufRead>, config: &Config) -> MyResult<()> {
+    let mut line_number = 1;
+
+    for line in file.lines() {
+        let line = line?;
+        if config.n {
+            println!("{:6}\t{}", line_number, line);
+            line_number += 1;
+        } else if config.b && !line.is_empty() {
+            println!("{:6}\t{}", line_number, line);
+            line_number += 1;
+        } else {
+            println!("{}", line);
+        }
+    }
+    Ok(())
+}
+
 pub fn run(config: Config) -> MyResult<()> {
-    //dbg!(config);
-    for filename in config.files {
+    for filename in &config.files {
         match open_file(&filename) {
             Err(err) => eprintln!("Failed to open {}: {}", filename, err),
-            Ok(_) => println!("Opened {}", filename),
+            Ok(file) => {
+                read_lines(file, &config)?;
+            }
         }
     }
     Ok(())
